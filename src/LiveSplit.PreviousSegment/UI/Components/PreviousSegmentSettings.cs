@@ -1,11 +1,12 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Model.Comparisons;
-using LiveSplit.TimeFormatters;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
+
+using LiveSplit.Model;
+using LiveSplit.Model.Comparisons;
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.UI.Components
 {
@@ -59,27 +60,27 @@ namespace LiveSplit.UI.Components
             chkPossibleTimeSave.DataBindings.Add("Checked", this, "ShowPossibleTimeSave", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        void chkOverride_CheckedChanged(object sender, EventArgs e)
+        private void chkOverride_CheckedChanged(object sender, EventArgs e)
         {
             label1.Enabled = btnTextColor.Enabled = chkOverride.Checked;
         }
 
-        void cmbComparison_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbComparison_SelectedIndexChanged(object sender, EventArgs e)
         {
             Comparison = cmbComparison.SelectedItem.ToString();
         }
 
-        void rdoDeltaTenths_CheckedChanged(object sender, EventArgs e)
+        private void rdoDeltaTenths_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDeltaAccuracy();
         }
 
-        void rdoDeltaSeconds_CheckedChanged(object sender, EventArgs e)
+        private void rdoDeltaSeconds_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDeltaAccuracy();
         }
 
-        void PreviousSegmentSettings_Load(object sender, EventArgs e)
+        private void PreviousSegmentSettings_Load(object sender, EventArgs e)
         {
             chkOverride_CheckedChanged(null, null);
             chkPossibleTimeSave_CheckedChanged(null, null);
@@ -87,7 +88,10 @@ namespace LiveSplit.UI.Components
             cmbComparison.Items.Add("Current Comparison");
             cmbComparison.Items.AddRange(CurrentState.Run.Comparisons.Where(x => x != BestSplitTimesComparisonGenerator.ComparisonName && x != NoneComparisonGenerator.ComparisonName).ToArray());
             if (!cmbComparison.Items.Contains(Comparison))
+            {
                 cmbComparison.Items.Add(Comparison);
+            }
+
             rdoDeltaHundredths.Checked = DeltaAccuracy == TimeAccuracy.Hundredths;
             rdoDeltaTenths.Checked = DeltaAccuracy == TimeAccuracy.Tenths;
             rdoDeltaSeconds.Checked = DeltaAccuracy == TimeAccuracy.Seconds;
@@ -108,27 +112,39 @@ namespace LiveSplit.UI.Components
             }
         }
 
-        void UpdateDeltaAccuracy()
+        private void UpdateDeltaAccuracy()
         {
             if (rdoDeltaSeconds.Checked)
+            {
                 DeltaAccuracy = TimeAccuracy.Seconds;
+            }
             else if (rdoDeltaTenths.Checked)
+            {
                 DeltaAccuracy = TimeAccuracy.Tenths;
+            }
             else
+            {
                 DeltaAccuracy = TimeAccuracy.Hundredths;
+            }
         }
 
-        void UpdateTimeSaveAccuracy()
+        private void UpdateTimeSaveAccuracy()
         {
             if (rdoTimeSaveSeconds.Checked)
+            {
                 TimeSaveAccuracy = TimeAccuracy.Seconds;
+            }
             else if (rdoTimeSaveTenths.Checked)
+            {
                 TimeSaveAccuracy = TimeAccuracy.Tenths;
+            }
             else
+            {
                 TimeSaveAccuracy = TimeAccuracy.Hundredths;
+            }
         }
 
-        void cmbGradientType_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbGradientType_SelectedIndexChanged(object sender, EventArgs e)
         {
             btnColor1.Visible = cmbGradientType.SelectedItem.ToString() != "Plain";
             btnColor2.DataBindings.Clear();

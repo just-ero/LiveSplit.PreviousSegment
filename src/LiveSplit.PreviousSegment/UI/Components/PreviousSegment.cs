@@ -1,12 +1,13 @@
-﻿using LiveSplit.Model;
-using LiveSplit.Model.Comparisons;
-using LiveSplit.TimeFormatters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+
+using LiveSplit.Model;
+using LiveSplit.Model.Comparisons;
+using LiveSplit.TimeFormatters;
 
 namespace LiveSplit.UI.Components
 {
@@ -39,7 +40,7 @@ namespace LiveSplit.UI.Components
             state.ComparisonRenamed += state_ComparisonRenamed;
         }
 
-        void state_ComparisonRenamed(object sender, EventArgs e)
+        private void state_ComparisonRenamed(object sender, EventArgs e)
         {
             var args = (RenameEventArgs)e;
             if (Settings.Comparison == args.OldName)
@@ -61,8 +62,8 @@ namespace LiveSplit.UI.Components
         private void DrawBackground(Graphics g, LiveSplitState state, float width, float height)
         {
             if (Settings.BackgroundColor.A > 0
-                || Settings.BackgroundGradient != GradientType.Plain
-                && Settings.BackgroundColor2.A > 0)
+                || (Settings.BackgroundGradient != GradientType.Plain
+                && Settings.BackgroundColor2.A > 0))
             {
                 var gradientBrush = new LinearGradientBrush(
                             new PointF(0, 0),
@@ -100,8 +101,8 @@ namespace LiveSplit.UI.Components
         public float MinimumHeight => InternalComponent.MinimumHeight;
 
         public string ComponentName
-            => "Previous Segment" + (Settings.Comparison == "Current Comparison" 
-                ? "" 
+            => "Previous Segment" + (Settings.Comparison == "Current Comparison"
+                ? ""
                 : " (" + CompositeComparisons.GetShortComparisonName(Settings.Comparison) + ")");
 
         public Control GetSettingsControl(LayoutMode mode)
@@ -143,7 +144,9 @@ namespace LiveSplit.UI.Components
             var time = state.Run[splitIndex].Comparisons[comparison][state.CurrentTimingMethod] - prevTime - bestSegments;
 
             if (time < TimeSpan.Zero)
+            {
                 time = TimeSpan.Zero;
+            }
 
             return time;
         }
@@ -152,7 +155,10 @@ namespace LiveSplit.UI.Components
         {
             var comparison = Settings.Comparison == "Current Comparison" ? state.CurrentComparison : Settings.Comparison;
             if (!state.Run.Comparisons.Contains(comparison))
+            {
                 comparison = state.CurrentComparison;
+            }
+
             var comparisonName = CompositeComparisons.GetShortComparisonName(comparison);
             var componentName = "Previous Segment" + (Settings.Comparison == "Current Comparison" ? "" : " (" + comparisonName + ")");
 
@@ -179,18 +185,26 @@ namespace LiveSplit.UI.Components
                     timeChange = LiveSplitStateHelper.GetPreviousSegmentDelta(state, state.CurrentSplitIndex - 1, comparison, state.CurrentTimingMethod);
                     timeSave = GetPossibleTimeSave(state, state.CurrentSplitIndex - 1, comparison);
                 }
+
                 if (timeChange != null)
                 {
                     if (liveSegment != null)
+                    {
                         InternalComponent.ValueLabel.ForeColor = LiveSplitStateHelper.GetSplitColor(state, timeChange, state.CurrentSplitIndex, false, false, comparison, state.CurrentTimingMethod).Value;
+                    }
                     else
+                    {
                         InternalComponent.ValueLabel.ForeColor = LiveSplitStateHelper.GetSplitColor(state, timeChange.Value, state.CurrentSplitIndex - 1, false, true, comparison, state.CurrentTimingMethod).Value;
+                    }
                 }
                 else
                 {
                     var color = LiveSplitStateHelper.GetSplitColor(state, null, state.CurrentSplitIndex - 1, true, true, comparison, state.CurrentTimingMethod);
                     if (color == null)
+                    {
                         color = Settings.OverrideTextColor ? Settings.TextColor : state.LayoutSettings.TextColor;
+                    }
+
                     InternalComponent.ValueLabel.ForeColor = color.Value;
                 }
             }
@@ -213,10 +227,11 @@ namespace LiveSplit.UI.Components
                     InternalComponent.AlternateNameText.Add("Prev. Segment");
                     InternalComponent.AlternateNameText.Add("Prev. Seg.");
                 }
+
                 previousNameText = InternalComponent.InformationName;
             }
 
-            InternalComponent.InformationValue = DeltaFormatter.Format(timeChange) 
+            InternalComponent.InformationValue = DeltaFormatter.Format(timeChange)
                 + (Settings.ShowPossibleTimeSave ? " / " + TimeSaveFormatter.Format(timeSave) : "");
 
             InternalComponent.Update(invalidator, state, width, height, mode);
@@ -226,6 +241,9 @@ namespace LiveSplit.UI.Components
         {
         }
 
-        public int GetSettingsHashCode() => Settings.GetSettingsHashCode();
+        public int GetSettingsHashCode()
+        {
+            return Settings.GetSettingsHashCode();
+        }
     }
 }
